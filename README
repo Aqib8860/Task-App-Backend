@@ -1,0 +1,235 @@
+# Project Setup and API Documentation
+
+## 🚀 How to Run the Project
+
+### Step 1: Create and Activate a Virtual Environment
+```bash
+python -m venv venv  # Create virtual environment
+source venv/bin/activate  # Activate (Mac/Linux)
+venv\Scripts\activate  # Activate (Windows)
+```
+
+### Step 2: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Step 3: Apply Migrations
+```bash
+python manage.py migrate
+```
+
+### Step 4: Run the Development Server
+```bash
+python manage.py runserver
+```
+
+---
+
+## 🔥 API Endpoints
+
+### 1️⃣ User Registration
+**Endpoint:** `POST /user/register/`
+
+**URL:** `http://127.0.0.1:8000/user/register/`
+
+**Request Body:**
+```json
+{
+    "username": "",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "password": ""
+}
+```
+
+**Response:**
+```json
+{
+    "message": "User registered successfully"
+}
+```
+
+---
+
+### 2️⃣ User Login (Obtain Access Token)
+**Endpoint:** `POST /user/login/`
+
+**URL:** `http://127.0.0.1:8000/user/login/`
+
+**Request Body:**
+```json
+{
+  "username": "aqib",
+  "password": "Aqib8860@"
+}
+```
+
+**Response:**
+```json
+{
+    "access": "your-access-token",
+    "refresh": "your-refresh-token"
+}
+```
+
+---
+
+### 3️⃣ Create a Task
+**Endpoint:** `POST /task/task/`
+
+**URL:** `http://127.0.0.1:8000/task/task/`
+
+**Headers:**
+```json
+{
+    "Authorization": "Bearer your-access-token"
+}
+```
+
+**Request Body:**
+```json
+{
+    "name": "Test Task 5",
+    "description": "This is the task description 5",
+    "task_type": "Work",
+    "completed_at": null, // datetime field
+    "assigned_to": [3, 4]
+}
+```
+
+**Response:**
+```json
+{
+    "id": 8,
+    "name": "Test Task 5",
+    "description": "This is the task description 5",
+    "created_at": "2025-03-25T09:23:14.784742Z",
+    "task_type": "Work",
+    "completed_at": null,
+    "status": "PENDING",
+    "created_by": 2,
+    "assigned_to": [
+        3,
+        4
+    ]
+}
+```
+
+📌 **Note:** `created_by` is automatically assigned from the authenticated user.
+
+---
+
+### 4️⃣ Get Created Tasks
+**Endpoint:** `GET /task/created-tasks/`
+
+**URL:** `http://127.0.0.1:8000/task/created-tasks/`
+
+**Headers:**
+```json
+{
+    "Authorization": "Bearer your-access-token"
+}
+```
+
+**Available Query Parameters (Optional):**
+- `status`
+- `task_type`
+- `created_at__date=YYYY-MM-DD`
+- `assigned_to`
+
+**Example Request:**
+```http
+GET /task/created-tasks?status=completed&task_type=Work&created_at__date=2025-03-24
+```
+
+**Response:**
+```json
+[
+    {
+        "id": 1,
+        "created_by_name": "Aqib - 2",
+        "assigned_to_details": [
+            {
+                "id": 3,
+                "first_name": "Test",
+                "last_name": ""
+            },
+            {
+                "id": 4,
+                "first_name": "Test",
+                "last_name": "2"
+            }
+        ],
+        "name": "Test Task",
+        "description": "This is the task description",
+        "created_at": "2025-03-24T15:59:33.694335Z",
+        "task_type": "Work",
+        "completed_at": null,
+        "status": "PENDING",
+        "created_by": 2
+    },
+]
+```
+
+---
+
+### 5️⃣ Get Assigned Tasks
+**Endpoint:** `GET /task/assigned-tasks/`
+
+**URL:** `http://127.0.0.1:8000/task/assigned-tasks/`
+
+**Headers:**
+```json
+{
+    "Authorization": "Bearer your-access-token"
+}
+```
+
+**Available Query Parameters (Optional):**
+- `status`
+- `task_type`
+- `created_at__date=YYYY-MM-DD`
+- `assigned_to`
+
+**Example Request:**
+```http
+GET /task/assigned-tasks?status=pending&task_type=Personal
+```
+
+**Response:**
+```json
+[
+    {
+        "id": 3,
+        "created_by_name": "Test2",
+        "assigned_to_details": [
+            {
+                "id": 2,
+                "first_name": "Aqib - 2",
+                "last_name": ""
+            }
+        ],
+        "name": "Task 3",
+        "description": "This is the task 3",
+        "created_at": "2025-03-25T08:04:09.232090Z",
+        "task_type": "Work",
+        "completed_at": null,
+        "status": "PENDING",
+        "created_by": 4
+    }
+]
+```
+
+---
+
+## 🎯 Additional Notes
+✅ Ensure your `.env` file is configured properly for environment variables (if applicable).  
+✅ Use **Postman** or **cURL** to test the APIs easily.  
+✅ If you encounter migration issues, try running:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
