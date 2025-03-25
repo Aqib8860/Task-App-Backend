@@ -26,16 +26,49 @@ class TaskViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Task.objects.filter(Q(assigned_to=user) | Q(created_by=user)).distinct()
 
+    # Create A New Task
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(created_by=user)
 
+    # Assign a task to multiple users.
+    def assign_task(self, request, pk=None):
+        task = Task.objects.filter(id=pk).first()
+        if not task:
+            return Response({"msg": "Task not found."}, status=404)
+        
+        assigned_users = request.data.get('assigned_to', [])
+        
+        if not isinstance(assigned_users, list):
+            return Response({"msg": "assigned_to must be a list of user IDs."}, status=400)
+        
+        task.assigned_to.add(*assigned_users)  # Assign users to task
+        task.save()
+        return Response({"msg": "Task assigned successfully!"}, status=200)
+        
+    # UNAssign a task to multiple users.
+    def unassign_task(self, request, pk=None):
+        task = Task.objects.filter(id=pk).first()
+        if not task:
+            return Response({"msg": "Task not found."}, status=404)
+        
+        assigned_users = request.data.get('assigned_to', [])
+        
+        if not isinstance(assigned_users, list):
+            return Response({"msg": "assigned_to must be a list of user IDs."}, status=400)
+        
+        task.assigned_to.remove(*assigned_users)  # Assign users to task
+        task.save()
+        return Response({"msg": "Task Unassigned successfully!"}, status=200)
+        
+    # Get User Create Tasks
     def created_tasks(self, request):
         user = request.user
         tasks = self.filter_queryset(self.get_queryset().filter(created_by=user))
         serializer = TasksListSerializer(tasks, many=True).data
         return Response(serializer)
     
+    # Get User Assigned tasks
     def assigned_tasks(self, request):
         user = request.user
         tasks = self.filter_queryset(self.get_queryset().filter(assigned_to=user))

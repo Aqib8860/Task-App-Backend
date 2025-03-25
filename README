@@ -224,6 +224,66 @@ GET /task/assigned-tasks?status=pending&task_type=Personal
 
 ---
 
+### 6 Assign a Task To Users
+**Endpoint:** `PATCH /task/assign-task/{task_id}/`
+
+**URL:** `http://127.0.0.1:8000/task/assign-task/2/`
+
+**Headers:**
+```json
+{
+    "Authorization": "Bearer your-access-token"
+}
+```
+
+**Request Body:**
+```json
+{
+    "assigned_to": [3,4]
+}
+```
+
+**Response:**
+```json
+{
+    "msg": "Task assigned successfully!"
+}
+```
+
+📌 **Note:** You can add multipler users at a time.
+
+---
+
+### 6 Un-Assign a Task To Users
+**Endpoint:** `PATCH /task/unassign-task/{task_id}/`
+
+**URL:** `http://127.0.0.1:8000/task/unassign-task/2/`
+
+**Headers:**
+```json
+{
+    "Authorization": "Bearer your-access-token"
+}
+```
+
+**Request Body:**
+```json
+{
+    "assigned_to": [3,4]
+}
+```
+
+**Response:**
+```json
+{
+    "msg": "Task Unassigned successfully!"
+}
+```
+
+📌 **Note:** You can unassign multipler users at a time.
+
+---
+
 ## 🎯 Additional Notes
 ✅ Ensure your `.env` file is configured properly for environment variables (if applicable).  
 ✅ Use **Postman** or **cURL** to test the APIs easily.  
